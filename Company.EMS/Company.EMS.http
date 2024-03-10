@@ -1,0 +1,6 @@
+@CompanyEMS_HostAddress = http://localhost:5115
+
+GET {{Company.EMS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

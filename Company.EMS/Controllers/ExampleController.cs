@@ -53,13 +53,4 @@ public class ExampleController(IMediator mediator, ApplicationDbContext context)
         var result = await _mediator.Send(new CreateExampleCommand(request));
         return BadRequest(result);
     }
-
-    [HttpPost]
-    [Route("test")]
-    public async Task<IActionResult> Test(string firstName)
-    {
-        await _context.Tests.AddAsync(new Test(firstName, "SSS"));
-        await _context.SaveChangesAsync();
-        return Ok();
-    }
 }

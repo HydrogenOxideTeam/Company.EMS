@@ -13,7 +13,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     }
 
     public DbSet<ExampleEntity> ExampleEntities { get; set; }
-    public DbSet<Test> Tests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

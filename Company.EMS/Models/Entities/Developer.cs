@@ -1,15 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Company.EMS.Models.Entities;
 
 public class Developer
 {
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public int Id { get; set; }
     public Guid UserId { get; set; } 
-    //public User User {get;set;}
     public int SalesManagerId { get; set; } 
-    //public SalesManager SalesManager {get;set;}
     public int ProjectManagerId { get; set; } 
-    //public ProjectManager ProjectManager {get;set;}
     public int ProgrammerTypeId { get; set; } 
-    //public ProgrammerType ProgrammerType {get;set;}
     public bool IsCaller { get; set; }
 
     public Developer(Guid userId, int salesManagerId, int projectManagerId, int programmerTypeId, bool isCaller)

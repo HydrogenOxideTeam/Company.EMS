@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
-builder.Services.AddValidatorsFromAssemblyContaining<CreateExampleCommandValidator>();
+//builder.Services.AddValidatorsFromAssemblyContaining<CreateExampleCommandValidator>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
@@ -78,15 +78,23 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.Sign
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 
-builder.Services.AddMediatR(cfg => cfg
-    .RegisterServicesFromAssemblies(typeof(GetExampleQuery)
-        .GetTypeInfo().Assembly));
+// builder.Services.AddMediatR(cfg => cfg
+//     .RegisterServicesFromAssemblies(typeof(GetExampleQuery)
+//         .GetTypeInfo().Assembly));
 
-builder.Services.AddCustomCorsPolicy(); 
-
+builder.Services.AddCustomCorsPolicy();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IExampleRepository, ExampleRepository>();
-builder.Services.AddScoped<IExampleService, ExampleService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+builder.Services.AddScoped<IDeveloperRepository, DeveloperRepository>();
+builder.Services.AddScoped<IEngagementRepository, EngagementRepository>();
+builder.Services.AddScoped<IProjectManagerRepository, ProjectManagerRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<ISalesManagerRepository, SalesManagerRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 // builder.Services.AddAuthentication(options =>
 //     {

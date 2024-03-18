@@ -26,7 +26,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<SalesManagerReport> SalesManagerReports { get; set; }
     public DbSet<SalesManagerReportEngagement> SalesManagerReportEngagements { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
-    public DbSet<ExampleEntity> ExampleEntities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

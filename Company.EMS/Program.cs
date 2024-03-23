@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text;
 using Company.EMS.Configurations;
 using Company.EMS.CQS.Commands.CreateExample;
+using Company.EMS.CQS.Commands.UserRegister;
 using Company.EMS.CQS.Queries.GetExample;
 using Company.EMS.Data;
 using Company.EMS.Extensions;
@@ -68,7 +69,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
-//builder.Services.AddValidatorsFromAssemblyContaining<CreateExampleCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterCommandValidator>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
@@ -78,9 +79,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.Sign
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 
-// builder.Services.AddMediatR(cfg => cfg
-//     .RegisterServicesFromAssemblies(typeof(GetExampleQuery)
-//         .GetTypeInfo().Assembly));
+builder.Services.AddMediatR(cfg => cfg
+    .RegisterServicesFromAssemblies(typeof(RegisterCommand)
+        .GetTypeInfo().Assembly));
 
 builder.Services.AddCustomCorsPolicy();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -96,27 +97,21 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 
-// builder.Services.AddAuthentication(options =>
-//     {
-//         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-//     })
-//     .AddJwtBearer(options =>
-//     {
-//         options.SaveToken = true;
-//         options.RequireHttpsMetadata = false;
-//         options.TokenValidationParameters = new TokenValidationParameters()
-//         {
-//             ValidateIssuer = true,
-//             ValidateAudience = true,
-//             ValidAudience = builder.Configuration["JWT:ValidAudience"],
-//             ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]))
-//         };
-//     });
-//
-// builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+
 
 var app = builder.Build();
 

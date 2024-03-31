@@ -26,9 +26,9 @@ public class EngagementService(IMapper mapper, IEngagementRepository engagementR
         return _mapper.Map<EngagementDto>(await _engagementRepository.AddAsync(_mapper.Map<Engagement>(engagement)));
     }
 
-    public async Task UpdateAsync(EngagementDto engagement)
+    public async Task UpdateAsync(int id, EngagementDto engagement)
     {
-        await _engagementRepository.UpdateAsync(_mapper.Map<Engagement>(engagement));
+        await _engagementRepository.UpdateAsync(id,_mapper.Map<Engagement>(engagement));
     }
 
     public async Task DeleteAsync(int id)

@@ -9,6 +9,6 @@ public interface IAccountService
     Task<List<AccountDto>> GetAllAsync();
     Task<AccountDto> GetByIdAsync(int id);
     Task<AccountDto> AddAsync(AccountDto account);
-    Task UpdateAsync(AccountDto account);
+    Task UpdateAsync(int id, AccountDto account);
     Task DeleteAsync(int id);
 }

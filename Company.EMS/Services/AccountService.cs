@@ -26,9 +26,9 @@ public class AccountService(IMapper mapper, IAccountRepository accountRepository
         return _mapper.Map<AccountDto>(await _accountRepository.AddAsync(_mapper.Map<Account>(account)));
     }
 
-    public async Task UpdateAsync(AccountDto account)
+    public async Task UpdateAsync(int id, AccountDto account)
     {
-        await _accountRepository.UpdateAsync(_mapper.Map<Account>(account));
+        await _accountRepository.UpdateAsync(id, _mapper.Map<Account>(account));
     }
 
     public async Task DeleteAsync(int id)

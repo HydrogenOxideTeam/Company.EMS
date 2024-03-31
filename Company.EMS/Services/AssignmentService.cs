@@ -26,9 +26,9 @@ public class AssignmentService(IMapper mapper, IAssignmentRepository assignmentR
         return _mapper.Map<AssignmentDto>(await _assignmentRepository.AddAsync(_mapper.Map<Assignment>(assignment)));
     }
 
-    public async Task UpdateAsync(AssignmentDto assignment)
+    public async Task UpdateAsync(int id, AssignmentDto assignment)
     {
-        await _assignmentRepository.UpdateAsync(_mapper.Map<Assignment>(assignment));
+        await _assignmentRepository.UpdateAsync(id,_mapper.Map<Assignment>(assignment));
     }
 
     public async Task DeleteAsync(int id)

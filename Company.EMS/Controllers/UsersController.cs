@@ -9,7 +9,7 @@ namespace Company.EMS.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController(IUserService userService): ControllerBase
+public class UsersController(IUserService userService): ControllerBase
 {
     private readonly IUserService _userService = userService;
     

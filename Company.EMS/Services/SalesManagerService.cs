@@ -26,9 +26,9 @@ public class SalesManagerService(IMapper mapper, ISalesManagerRepository salesMa
         return _mapper.Map<SalesManagerDto>(await _salesManagerRepository.AddAsync(_mapper.Map<SalesManager>(salesManager)));
     }
 
-    public async Task UpdateAsync(SalesManagerDto salesManager)
+    public async Task UpdateAsync(int id, SalesManagerDto salesManager)
     {
-        await _salesManagerRepository.UpdateAsync(_mapper.Map<SalesManager>(salesManager));
+        await _salesManagerRepository.UpdateAsync(id,_mapper.Map<SalesManager>(salesManager));
     }
 
     public async Task DeleteAsync(int id)

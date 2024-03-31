@@ -15,6 +15,10 @@ public class Repository<T>: IRepository<T> where T: class
     }
     public async Task<T> AddAsync(T entity)
     {
+        if (entity != null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
         await _dbSet.AddAsync(entity);
         await _context.SaveChangesAsync();
         return entity;
@@ -30,20 +34,31 @@ public class Repository<T>: IRepository<T> where T: class
         return await _dbSet.ToListAsync();
     }
 
-    public async Task UpdateAsync(T entity)
+    public async Task UpdateAsync(int id, T entity)
     {
-        _dbSet.Attach(entity);
-        _context.Entry(entity).State = EntityState.Modified;
+        if (entity == null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        var existingEntity = await _dbSet.FindAsync(id);
+        if (existingEntity == null)
+        {
+            throw new ArgumentException($"Entity with {id} is not found");
+        }
+
+        _context.Entry(existingEntity).CurrentValues.SetValues(entity);
         await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
     {
         var entity = await GetByIdAsync(id);
-        if (entity != null)
+        if (entity == null)
         {
-            _dbSet.Remove(entity);
+            throw new ArgumentException($"Entity with {id} is not found");
         }
+        _dbSet.Remove(entity);
         await _context.SaveChangesAsync();
     }
 }

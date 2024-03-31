@@ -7,6 +7,6 @@ public interface IDeveloperService
     Task<List<DeveloperDto>> GetAllAsync();
     Task<DeveloperDto> GetByIdAsync(int id);
     Task<DeveloperDto> AddAsync(DeveloperDto developer);
-    Task UpdateAsync(DeveloperDto developer);
+    Task UpdateAsync(int id, DeveloperDto developer);
     Task DeleteAsync(int id);
 }

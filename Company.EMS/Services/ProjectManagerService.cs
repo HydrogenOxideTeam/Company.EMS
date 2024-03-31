@@ -26,9 +26,9 @@ public class ProjectManagerService(IMapper mapper, IProjectManagerRepository pro
         return _mapper.Map<ProjectManagerDto>(await _projectManagerRepository.AddAsync(_mapper.Map<ProjectManager>(projectManager)));
     }
 
-    public async Task UpdateAsync(ProjectManagerDto projectManager)
+    public async Task UpdateAsync(int id, ProjectManagerDto projectManager)
     {
-        await _projectManagerRepository.UpdateAsync(_mapper.Map<ProjectManager>(projectManager));
+        await _projectManagerRepository.UpdateAsync(id,_mapper.Map<ProjectManager>(projectManager));
     }
 
     public async Task DeleteAsync(int id)

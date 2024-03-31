@@ -26,9 +26,9 @@ public class DeveloperService(IMapper mapper, IDeveloperRepository developerRepo
         return _mapper.Map<DeveloperDto>(await _developerRepository.AddAsync(_mapper.Map<Developer>(developer)));
     }
 
-    public async Task UpdateAsync(DeveloperDto developer)
+    public async Task UpdateAsync(int id, DeveloperDto developer)
     {
-        await _developerRepository.UpdateAsync(_mapper.Map<Developer>(developer));
+        await _developerRepository.UpdateAsync(id,_mapper.Map<Developer>(developer));
     }
 
     public async Task DeleteAsync(int id)

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Company.EMS.Models.DTOs;
 using Company.EMS.Services.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,21 @@ public class AccountController(IAccountService accountService): ControllerBase
         {
             var accounts = await _accountService.GetAllAsync();
             return Ok(accounts);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    
+    [HttpPost]
+    [Route("accounts")]
+    public async Task<IActionResult> AddAcount([FromBody] AccountDto account)
+    {
+        try
+        {
+            var accountAdded = await _accountService.AddAsync(account);
+            return Ok(accountAdded);
         }
         catch (Exception ex)
         {

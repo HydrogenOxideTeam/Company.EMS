@@ -1,6 +1,6 @@
 namespace Company.EMS.Models.DTOs;
 
-public record AssigmentDto
+public record AssignmentDto
 {
     public int Id { get; init; }
     public string? Name { get; init; }

@@ -9,7 +9,7 @@ public class EntityToDtoAndReverse: Profile
     public EntityToDtoAndReverse()
     {
         CreateMap<Account, AccountDto>().ReverseMap();
-        CreateMap<Assignment, AssigmentDto>().ReverseMap();
+        CreateMap<Assignment, AssignmentDto>().ReverseMap();
         CreateMap<Developer, DeveloperDto>().ReverseMap();
         CreateMap<DeveloperProject, DeveloperProjectDto>().ReverseMap();
         CreateMap<DeveloperReportAssignment, DeveloperReportAssigmentDto>().ReverseMap();

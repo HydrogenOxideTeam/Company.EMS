@@ -5,14 +5,10 @@ namespace Company.EMS.Models.Entities;
 
 public class DeveloperReportAssignment
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public int DeveloperReportId { get; set; } 
+    public DeveloperReport DeveloperReport { get; set; }
     public int AssignmentId { get; set; } 
-    
-    public DeveloperReportAssignment(int developerReportId, int assignmentId)
-    {
-        DeveloperReportId = developerReportId;
-        AssignmentId = assignmentId;
-    }
+    public Assignment Assignment { get; set; }
 }

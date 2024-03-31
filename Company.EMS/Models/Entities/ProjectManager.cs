@@ -1,16 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace Company.EMS.Models.Entities;
 
 public class ProjectManager
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    public Guid UserId { get; set; } 
+    public string UserId { get; set; } 
+    public IdentityUser User { get; set; } 
     
-    public ProjectManager(Guid userId)
-    {
-        UserId = userId;
-    }
+    public List<Developer> Developers { get; set; }
+    public List<SalesManager> SalesManagers { get; set; }
+
 }

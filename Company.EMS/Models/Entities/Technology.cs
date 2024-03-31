@@ -1,11 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Company.EMS.Models.Entities;
 
-public enum Technology
+public class Technology
 {
-    JavaScript = 0,
-    TypeScript = 1,
-    NodeJS = 2,
-    BunJS = 3,
-    ExpressJS = 4,
-    NestJS = 5
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    public List<DeveloperTechnology> DeveloperTechnologies { get; set; }
+    public List<ProjectTechnology> ProjectTechnologies { get; set; }
+
 }

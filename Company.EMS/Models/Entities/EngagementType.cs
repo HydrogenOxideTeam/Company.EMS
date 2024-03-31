@@ -1,8 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Company.EMS.Models.Entities;
 
-public enum EngagementType
+public class EngagementType
 {
-    Request = 0,
-    Invitation = 1,
-    Privately = 2
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    public List<Engagement> Engagements { get; set; }
+
 }

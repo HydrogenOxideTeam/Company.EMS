@@ -1,6 +1,6 @@
 ﻿using System.Security.Authentication;
-using Company.EMS.CQS.Commands.UserLogin;
-using Company.EMS.CQS.Commands.UserRegister;
+using Company.EMS.Models.DTOs;
+using Company.EMS.Services.Abstractions;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -9,17 +9,17 @@ namespace Company.EMS.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController(IMediator mediator): ControllerBase
+public class UserController(IUserService userService): ControllerBase
 {
-    private readonly IMediator _mediator = mediator;
+    private readonly IUserService _userService = userService;
     
     [HttpPost]
     [Route("register")]
-    public async Task<IActionResult> RegisterAsync(RegisterCommand request)
+    public async Task<IActionResult> RegisterAsync(RegisterDto request)
     {
         try
         {
-            var token = await _mediator.Send(request, CancellationToken.None);
+            var token = await _userService.RegisterUserAsync(request);
             if (!string.IsNullOrEmpty(token))
             {
                 return Ok(token);
@@ -43,11 +43,11 @@ public class UserController(IMediator mediator): ControllerBase
     
     [HttpPost]
     [Route("login")]
-    public async Task<IActionResult> LoginAsync(LoginCommand request)
+    public async Task<IActionResult> LoginAsync(LoginDto request)
     {
         try
         {
-            var token = await _mediator.Send(request, CancellationToken.None);
+            var token = await _userService.LoginUserAsync(request);
             if (!string.IsNullOrEmpty(token))
             {
                 return Ok(token);

@@ -1,10 +1,9 @@
-using Company.EMS.CQS.Commands.UserLogin;
-using Company.EMS.CQS.Commands.UserRegister;
+using Company.EMS.Models.DTOs;
 
 namespace Company.EMS.Services.Abstractions;
 
 public interface IUserService
 {
-    Task<string> RegisterUserAsync(RegisterCommand command);
-    Task<string> LoginUserAsync(LoginCommand command);
+    Task<string> RegisterUserAsync(RegisterDto request);
+    Task<string> LoginUserAsync(LoginDto command);
 }

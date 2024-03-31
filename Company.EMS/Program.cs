@@ -1,11 +1,11 @@
-using System.Reflection;
+using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using Company.EMS.Configurations;
-using Company.EMS.CQS.Commands.CreateExample;
-using Company.EMS.CQS.Commands.UserRegister;
-using Company.EMS.CQS.Queries.GetExample;
 using Company.EMS.Data;
 using Company.EMS.Extensions;
+using Company.EMS.Models.Configuration;
+using Company.EMS.Models.DTOs.Validators;
 using Company.EMS.Repositories;
 using Company.EMS.Repositories.Abstractions;
 using Company.EMS.Repositories.Generic;
@@ -43,25 +43,25 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
     options.MapType<Guid>(() => new OpenApiSchema { Type = "string", Format = null });
-    // options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-    // {
-    //     Name = "Authorization",
-    //     Scheme = "Bearer",
-    //     BearerFormat = "JWT",
-    //     In = ParameterLocation.Header,
-    //     Description = "JWT Authorization header using the Bearer scheme"
-    // });
-    // options.AddSecurityRequirement(new OpenApiSecurityRequirement {
-    //     {
-    //         new OpenApiSecurityScheme {
-    //             Reference = new OpenApiReference {
-    //                 Type = ReferenceType.SecurityScheme,
-    //                 Id = "Bearer"
-    //             }
-    //         },
-    //         new string[] {}
-    //     }
-    // });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
     // var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     // options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
@@ -69,7 +69,16 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
-builder.Services.AddValidatorsFromAssemblyContaining<RegisterCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
+
+var mapperConfiguration = new MapperConfiguration(cfg =>
+{
+    cfg.AddProfile<GenericEnumToDtoProfile>();
+    cfg.AddProfile<EntityToDtoAndReverse>();
+});
+
+var mapper = mapperConfiguration.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
@@ -77,11 +86,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-
-
-builder.Services.AddMediatR(cfg => cfg
-    .RegisterServicesFromAssemblies(typeof(RegisterCommand)
-        .GetTypeInfo().Assembly));
 
 builder.Services.AddCustomCorsPolicy();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -95,23 +99,27 @@ builder.Services.AddScoped<ISalesManagerRepository, SalesManagerRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
-});
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            RoleClaimType = ClaimTypes.Role
+        };
+    });
 
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+});
 
 var app = builder.Build();
 
@@ -120,14 +128,16 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
+    app.UseDeveloperExceptionPage();
 }
 
 //app.UseCors("DefaultCorsPolicy");
-app.UseCors();
-app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseRouting();
+app.UseCors();
+
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
@@ -136,8 +146,6 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        // Your method should be async and await the CreateRolesAsync call.
-        // This ensures you're not blocking the thread and properly awaiting async operations.
         await InitializeRolesAndUser.CreateRolesAsync(services);
     }
     catch (Exception ex)

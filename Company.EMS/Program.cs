@@ -100,7 +100,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
-
+builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+builder.Services.AddScoped<IDeveloperService, DeveloperService>();
+builder.Services.AddScoped<IEngagementService, EngagementService>();
+builder.Services.AddScoped<IProjectManagerService, ProjectManagerService>();
+builder.Services.AddScoped<ISalesManagerService, SalesManagerService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

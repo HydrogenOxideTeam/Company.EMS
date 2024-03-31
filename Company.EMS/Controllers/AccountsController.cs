@@ -1,8 +1,5 @@
-﻿using System.ComponentModel;
-using Company.EMS.Models.DTOs;
+﻿using Company.EMS.Models.DTOs;
 using Company.EMS.Services.Abstractions;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.EMS.Controllers;
@@ -28,8 +25,8 @@ public class AccountsController(IAccountService accountService): ControllerBase
     }
     
     [HttpGet]
-    [Route("{id:int}")]
-    public async Task<IActionResult> GetAccountById([FromQuery] int id)
+    [Route("{id}")]
+    public async Task<IActionResult> GetAccountById(int id)
     {
         try
         {
@@ -57,13 +54,28 @@ public class AccountsController(IAccountService accountService): ControllerBase
     }
     
     [HttpPut]
-    [Route("{id:int}")]
-    public async Task<IActionResult> UpdateAccount([FromQuery] int id)
+    [Route("{id}")]
+    public async Task<IActionResult> UpdateAccount(int id, [FromBody] AccountDto account)
     {
         try
         {
-            var account = await _accountService.GetByIdAsync(id);
-            return Ok(account);
+            await _accountService.UpdateAsync(id, account);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> DeleteAccount(int id)
+    {
+        try
+        {
+            await _accountService.DeleteAsync(id);
+            return Ok();
         }
         catch (Exception ex)
         {

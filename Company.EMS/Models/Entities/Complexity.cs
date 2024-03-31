@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Company.EMS.Models.Entities;
 
-public enum Complexity
+public class Complexity
 {
-    Simple = 0,
-    Easy = 1,
-    Medium = 2,
-    Hard = 3,
-    Expert = 4
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    public List<Assignment> Assignments { get; set; }
 }

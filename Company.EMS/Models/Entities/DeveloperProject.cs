@@ -5,13 +5,10 @@ namespace Company.EMS.Models.Entities;
 
 public class DeveloperProject
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    public int ProjectId { get; set; } 
-    public int DeveloperId { get; set; } 
-    public DeveloperProject(int projectId, int developerId)
-    {
-        ProjectId = projectId;
-        DeveloperId = developerId;
-    }
+    public int ProjectId { get; set; }
+    public Project Project { get; set; }
+    public int DeveloperId { get; set; }
+    public Developer Developer { get; set; }
 }

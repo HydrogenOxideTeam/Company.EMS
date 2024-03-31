@@ -1,9 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Company.EMS.Models.Entities;
 
-public enum ProgrammerType
+public class ProgrammerType
 {
-    FullStack = 0,
-    FrontEnd = 1,
-    BackEnd = 2,
-    DevOps = 3
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    public List<Developer> Developers { get; set; }
+
 }

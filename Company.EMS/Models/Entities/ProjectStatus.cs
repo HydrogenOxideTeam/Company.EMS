@@ -1,9 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Company.EMS.Models.Entities;
 
-public enum ProjectStatus
+public class ProjectStatus
 {
-    Completed = 0,
-    InProgress = 1,
-    Paused = 2,
-    Pending = 3
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    public List<Project> Projects { get; set; }
+
 }

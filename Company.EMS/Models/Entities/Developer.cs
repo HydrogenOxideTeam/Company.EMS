@@ -1,24 +1,25 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace Company.EMS.Models.Entities;
 
 public class Developer
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    public Guid UserId { get; set; } 
+    public string UserId { get; set; } 
+    public IdentityUser User { get; set; }
     public int SalesManagerId { get; set; } 
-    public int ProjectManagerId { get; set; } 
-    public int ProgrammerTypeId { get; set; } 
+    public SalesManager SalesManager { get; set; }
+    public int ProjectManagerId { get; set; }
+    public ProjectManager ProjectManager { get; set; }
+    public int ProgrammerTypeId { get; set; }
+    public ProgrammerType ProgrammerType { get; set; }
     public bool IsCaller { get; set; }
+    
+    public List<DeveloperProject> DeveloperProjects { get; set; }
+    public List<DeveloperReport> DeveloperReports { get; set; }
+    public List<DeveloperTechnology> DeveloperTechnologies { get; set; }
 
-    public Developer(Guid userId, int salesManagerId, int projectManagerId, int programmerTypeId, bool isCaller)
-    {
-        UserId = userId;
-        SalesManagerId = salesManagerId;
-        ProjectManagerId = projectManagerId;
-        ProgrammerTypeId = programmerTypeId;
-        IsCaller = isCaller;
-    }
 }

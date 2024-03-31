@@ -1,8 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Company.EMS.Models.Entities;
 
-public enum ReportStatus
+public class ReportStatus
 {
-    Pending = 0,
-    Approved = 1,
-    Returned = 2
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    public List<DeveloperReport> DeveloperReports { get; set; }
+    public List<SalesManagerReport> SalesManagerReports { get; set; }
+
 }

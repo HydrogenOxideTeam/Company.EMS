@@ -1,8 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Company.EMS.Models.Entities;
 
-public enum ProjectType
+public class ProjectType
 {
-    Hourly = 0,
-    Offer = 1,
-    FixedPrice = 2
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    public List<Project> Projects { get; set; }
+
 }

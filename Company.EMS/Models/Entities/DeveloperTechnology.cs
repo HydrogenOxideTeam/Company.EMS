@@ -5,14 +5,10 @@ namespace Company.EMS.Models.Entities;
 
 public class DeveloperTechnology
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public int DeveloperId { get; set; } 
+    public Developer Developer { get; set; }
     public int TechnologyId { get; set; } 
-
-    public DeveloperTechnology(int developerId, int technologyId)
-    {
-        DeveloperId = developerId;
-        TechnologyId = technologyId;
-    }
+    public Technology Technology { get; set; }
 }

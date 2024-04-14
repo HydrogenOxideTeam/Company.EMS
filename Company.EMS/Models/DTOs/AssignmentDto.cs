@@ -9,5 +9,5 @@ public record AssignmentDto()
     public string? Name { get; init; }
     public string? Comments { get; init; }
     public int HoursSpent { get; init; }
-    public int ComplexityId { get; init; } 
+    public int Complexity { get; init; } 
 }

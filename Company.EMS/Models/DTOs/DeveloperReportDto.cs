@@ -8,5 +8,5 @@ public record DeveloperReportDto()
     public DateTime Date { get; init; }
     public int TotalHoursSpent { get; init; } 
     public string? Comments { get; init; } 
-    public int ReportStatusId { get; init; }
+    public int ReportStatus { get; init; }
 }

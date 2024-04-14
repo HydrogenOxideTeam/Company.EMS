@@ -4,9 +4,9 @@ using Company.EMS.Models.Entities;
 
 namespace Company.EMS.Models.Configuration;
 
-public class EntityToDtoAndReverseProfile: Profile
+public class EntityProfile: Profile
 {
-    public EntityToDtoAndReverseProfile()
+    public EntityProfile()
     {
         CreateMap<Account, AccountDto>().ReverseMap();
         CreateMap<Assignment, AssignmentDto>().ReverseMap();

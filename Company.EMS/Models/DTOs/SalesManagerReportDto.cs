@@ -8,5 +8,5 @@ public record SalesManagerReportDto
     public DateOnly Date { get; init; } 
     public int EngagementTotal { get; init; } 
     public string? Comments { get; init; } 
-    public int ReportStatusId { get; init; } 
+    public int ReportStatus { get; init; } 
 }

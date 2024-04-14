@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Company.EMS.Models.Entities.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace Company.EMS.Models.Entities;
@@ -10,13 +11,11 @@ public class Project
     public int Id { get; set; }
     public string? Name { get; set; } 
     public string? Customer { get; set; } 
-    public int ProjectTypeId { get; set; } 
     public ProjectType ProjectType { get; set; }
     public int HoursLimit { get; set; } 
     public int Rate { get; set; } 
     public int AccountId { get; set; } 
     public Account Account { get; set; }
-    public int ProjectStatusId { get; set; } 
     public ProjectStatus ProjectStatus { get; set; }
     public string CallerId { get; set; } 
     public IdentityUser Caller { get; set; }

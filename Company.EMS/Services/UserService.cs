@@ -2,31 +2,60 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Company.EMS.Models.DTOs;
-using Company.EMS.Models.DTOs.Validators;
+using Company.EMS.Models.Entities;
+using Company.EMS.Repositories.Generic;
 using Company.EMS.Services.Abstractions;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace Company.EMS.Services;
 
-public class UserService(UserManager<IdentityUser> userManager, IConfiguration configuration): IUserService
+/// <summary>
+/// 
+/// </summary>
+/// <param name="userManager"></param>
+/// <param name="configuration"></param>
+/// <param name="unitOfWork"></param>
+public class UserService(UserManager<IdentityUser> userManager, IConfiguration configuration, IUnitOfWork unitOfWork): IUserService
 {
     private readonly UserManager<IdentityUser> _userManager = userManager;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<string> RegisterUserAsync(RegisterDto request)
     {
-        var user = new IdentityUser { UserName = request.UserName, Email = request.Email };
+        var user = new IdentityUser { UserName = request.FirstName + request.LastName, Email = request.Email };
         var result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
         {
             throw new Exception(string.Join("\n", result.Errors.Select(e => e.Description)));
         }
         await userManager.AddToRoleAsync(user, "CommonUser");
+        var userProfile = new UserProfile()
+        {
+            AvatarUrl = null,
+            Date = DateOnly.FromDateTime(DateTime.Now),
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            PhoneNumber = null,
+            UserId = user.Id,
+            User = user
+        };
+        await unitOfWork.UserProfiles.AddAsync(userProfile);
+        await unitOfWork.CompleteAsync();
         return await GenerateJwtToken(user);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidDataException"></exception>
     public async Task<string> LoginUserAsync(LoginDto request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);

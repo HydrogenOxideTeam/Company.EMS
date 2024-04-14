@@ -13,6 +13,7 @@ public interface IUnitOfWork: IDisposable
     IRepository<Project> Projects { get; }
     IRepository<SalesManager> SalesManagers { get; }
     IRepository<IdentityUser> Users { get; }
+    IRepository<UserProfile> UserProfiles { get; } 
 
     Task<int> CompleteAsync();
 }

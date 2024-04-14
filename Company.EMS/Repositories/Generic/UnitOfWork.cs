@@ -13,6 +13,7 @@ public class UnitOfWork(ApplicationDbContext context): IUnitOfWork
     public IRepository<ProjectManager> ProjectManagers { get; } = new Repository<ProjectManager>(context);
     public IRepository<Project> Projects { get; } = new Repository<Project>(context);
     public IRepository<SalesManager> SalesManagers { get; } = new Repository<SalesManager>(context);
+    public IRepository<UserProfile> UserProfiles { get; } = new Repository<UserProfile>(context);
     public IRepository<IdentityUser> Users { get; } = new Repository<IdentityUser>(context);
     
     public async Task<int> CompleteAsync()

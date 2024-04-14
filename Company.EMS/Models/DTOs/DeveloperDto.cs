@@ -6,6 +6,6 @@ public record DeveloperDto()
     public Guid UserId { get; init; } 
     public int SalesManagerId { get; init; } 
     public int ProjectManagerId { get; init; } 
-    public int ProgrammerTypeId { get; init; } 
+    public int ProgrammerType { get; init; } 
     public bool IsCaller { get; init; }
 }

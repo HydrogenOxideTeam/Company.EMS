@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Company.EMS.Models.Entities.Enums;
 
 namespace Company.EMS.Models.Entities;
 
@@ -14,7 +15,6 @@ public class DeveloperReport
     public DateTime Date { get; set; }
     public int TotalHoursSpent { get; set; } 
     public string? Comments { get; set; } 
-    public int ReportStatusId { get; set; }
     public ReportStatus ReportStatus { get; set; }
     
     public List<DeveloperReportAssignment> DeveloperReportAssignments { get; set; }

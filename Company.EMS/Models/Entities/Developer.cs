@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Company.EMS.Models.Entities.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace Company.EMS.Models.Entities;
@@ -14,7 +15,6 @@ public class Developer
     public SalesManager SalesManager { get; set; }
     public int ProjectManagerId { get; set; }
     public ProjectManager ProjectManager { get; set; }
-    public int ProgrammerTypeId { get; set; }
     public ProgrammerType ProgrammerType { get; set; }
     public bool IsCaller { get; set; }
     

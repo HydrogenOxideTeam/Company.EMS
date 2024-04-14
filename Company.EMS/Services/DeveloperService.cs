@@ -1,38 +1,47 @@
 ﻿using AutoMapper;
 using Company.EMS.Models.DTOs;
 using Company.EMS.Models.Entities;
-using Company.EMS.Repositories.Abstractions;
+using Company.EMS.Repositories.Generic;
 using Company.EMS.Services.Abstractions;
 
 namespace Company.EMS.Services;
 
-public class DeveloperService(IMapper mapper, IDeveloperRepository developerRepository): IDeveloperService
+public class DeveloperService(IMapper mapper, IUnitOfWork unitOfWork): IDeveloperService
 {
-    private readonly IMapper _mapper = mapper;
-    private readonly IDeveloperRepository _developerRepository = developerRepository;
-    
-    public async Task<List<DeveloperDto>> GetAllAsync()
+    public async Task<IEnumerable<DeveloperDto>> GetAllAsync()
     {
-        return _mapper.Map<List<DeveloperDto>>((await _developerRepository.GetAllAsync())?.ToList());
+        var developers = await unitOfWork.Developers.GetAllAsync();
+        
+        return mapper.Map<IEnumerable<DeveloperDto>>(developers);
     }
 
-    public async Task<DeveloperDto> GetByIdAsync(int id)
+    public async Task<DeveloperDto?> GetByIdAsync(int id)
     {
-        return _mapper.Map<DeveloperDto>(await _developerRepository.GetByIdAsync(id));
+        var developer = await unitOfWork.Developers.GetByIdAsync(id);
+        return mapper.Map<DeveloperDto>(developer);
     }
 
-    public async Task<DeveloperDto> AddAsync(DeveloperDto developer)
+    public async Task<DeveloperDto?> AddAsync(DeveloperDto? developerDto)
     {
-        return _mapper.Map<DeveloperDto>(await _developerRepository.AddAsync(_mapper.Map<Developer>(developer)));
+        var developer = mapper.Map<Developer>(developerDto);
+        var developerAdded = await unitOfWork.Developers.AddAsync(developer);
+        
+        await unitOfWork.CompleteAsync();
+       
+        return mapper.Map<DeveloperDto>(developerAdded);
     }
 
-    public async Task UpdateAsync(int id, DeveloperDto developer)
+    public async Task UpdateAsync(int id, DeveloperDto? developerDto)
     {
-        await _developerRepository.UpdateAsync(id,_mapper.Map<Developer>(developer));
+        var developer = mapper.Map<Developer>(developerDto);
+        
+        await unitOfWork.Developers.UpdateAsync(id, developer);
+        await unitOfWork.CompleteAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteByIdAsync(int id)
     {
-        await _developerRepository.DeleteAsync(id);
+        await unitOfWork.Developers.DeleteByIdAsync(id);
+        await unitOfWork.CompleteAsync();
     }
 }

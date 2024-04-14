@@ -1,38 +1,43 @@
 ﻿using AutoMapper;
 using Company.EMS.Models.DTOs;
 using Company.EMS.Models.Entities;
-using Company.EMS.Repositories.Abstractions;
+using Company.EMS.Repositories.Generic;
 using Company.EMS.Services.Abstractions;
 
 namespace Company.EMS.Services;
 
-public class ProjectManagerService(IMapper mapper, IProjectManagerRepository projectManagerRepository): IProjectManagerService
+public class ProjectManagerService(IMapper mapper, IUnitOfWork unitOfWork): IProjectManagerService
 {
-    private readonly IMapper _mapper = mapper;
-    private readonly IProjectManagerRepository _projectManagerRepository = projectManagerRepository;
-    
-    public async Task<List<ProjectManagerDto>> GetAllAsync()
+    public async Task<IEnumerable<ProjectManagerDto>> GetAllAsync()
     {
-        return _mapper.Map<List<ProjectManagerDto>>((await _projectManagerRepository.GetAllAsync())?.ToList());
+        var projectManagers = await unitOfWork.ProjectManagers.GetAllAsync();
+        return mapper.Map<IEnumerable<ProjectManagerDto>>(projectManagers);
     }
 
-    public async Task<ProjectManagerDto> GetByIdAsync(int id)
+    public async Task<ProjectManagerDto?> GetByIdAsync(int id)
     {
-        return _mapper.Map<ProjectManagerDto>(await _projectManagerRepository.GetByIdAsync(id));
+        var projectManager = await unitOfWork.ProjectManagers.GetByIdAsync(id);
+        return mapper.Map<ProjectManagerDto>(projectManager);
     }
 
-    public async Task<ProjectManagerDto> AddAsync(ProjectManagerDto projectManager)
+    public async Task<ProjectManagerDto?> AddAsync(ProjectManagerDto? projectManagerDto)
     {
-        return _mapper.Map<ProjectManagerDto>(await _projectManagerRepository.AddAsync(_mapper.Map<ProjectManager>(projectManager)));
+        var projectManager = mapper.Map<ProjectManager>(projectManagerDto);
+        var projectManagerAdded = await unitOfWork.ProjectManagers.AddAsync(projectManager);
+        await unitOfWork.CompleteAsync();
+        return mapper.Map<ProjectManagerDto>(projectManagerAdded);
     }
 
-    public async Task UpdateAsync(int id, ProjectManagerDto projectManager)
+    public async Task UpdateAsync(int id, ProjectManagerDto? projectManagerDto)
     {
-        await _projectManagerRepository.UpdateAsync(id,_mapper.Map<ProjectManager>(projectManager));
+        var projectManager = mapper.Map<ProjectManager>(projectManagerDto);
+        await unitOfWork.ProjectManagers.UpdateAsync(id, projectManager);
+        await unitOfWork.CompleteAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteByIdAsync(int id)
     {
-        await _projectManagerRepository.DeleteAsync(id);
+        await unitOfWork.ProjectManagers.DeleteByIdAsync(id);
+        await unitOfWork.CompleteAsync();
     }
 }

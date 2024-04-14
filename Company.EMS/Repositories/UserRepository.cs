@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Company.EMS.Repositories;
 
-public class UserRepository: Repository<IdentityUser>, IUserRepository
+public class UserRepository(ApplicationDbContext context): Repository<IdentityUser>(context), IUserRepository
 {
-    public UserRepository(ApplicationDbContext context) : base(context) { }
 }

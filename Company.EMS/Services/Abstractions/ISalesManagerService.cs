@@ -4,9 +4,9 @@ namespace Company.EMS.Services.Abstractions;
 
 public interface ISalesManagerService
 {
-    Task<List<SalesManagerDto>> GetAllAsync();
-    Task<SalesManagerDto> GetByIdAsync(int id);
-    Task<SalesManagerDto> AddAsync(SalesManagerDto salesManager);
-    Task UpdateAsync(int id, SalesManagerDto salesManager);
-    Task DeleteAsync(int id);
+    Task<IEnumerable<SalesManagerDto>> GetAllAsync();
+    Task<SalesManagerDto?> GetByIdAsync(int id);
+    Task<SalesManagerDto?> AddAsync(SalesManagerDto? salesManagerDto);
+    Task UpdateAsync(int id, SalesManagerDto? salesManagerDto);
+    Task DeleteByIdAsync(int id);
 }

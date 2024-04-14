@@ -1,7 +1,5 @@
 namespace Company.EMS.Models.DTOs;
 
-public record ReportStatusDto()
+public record ReportStatusDto(): BaseEnumDto
 {
-    public int Id { get; init; }
-    public string? Name { get; init; }
 }

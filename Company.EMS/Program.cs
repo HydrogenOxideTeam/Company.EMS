@@ -74,7 +74,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
 var mapperConfiguration = new MapperConfiguration(cfg =>
 {
     cfg.AddProfile<GenericEnumToDtoProfile>();
-    cfg.AddProfile<EntityToDtoAndReverse>();
+    cfg.AddProfile<EntityToDtoAndReverseProfile>();
 });
 
 var mapper = mapperConfiguration.CreateMapper();

@@ -3,62 +3,50 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Company.EMS.Repositories.Generic;
 
-public class Repository<T>: IRepository<T> where T: class
-{ 
-    private readonly ApplicationDbContext _context;
-    private readonly DbSet<T> _dbSet;
-    
-    protected Repository(ApplicationDbContext context)
-    {
-        _context = context;
-        _dbSet = context.Set<T>();
-    }
-    public async Task<T> AddAsync(T entity)
-    {
-        if (entity != null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-        await _dbSet.AddAsync(entity);
-        await _context.SaveChangesAsync();
-        return entity;
-    }
-
+public class Repository<T>(ApplicationDbContext context): IRepository<T> where T: class
+{
+    protected readonly ApplicationDbContext Context = context;
+    protected readonly DbSet<T> DbSet = context.Set<T>();
     public async Task<T?> GetByIdAsync(int id)
     {
-        return await _dbSet.FindAsync(id);
+        return await DbSet.FindAsync(id);
     }
 
-    public async Task<IEnumerable<T>?> GetAllAsync()
+    public async Task<List<T>?> GetAllAsync()
     {
-        return await _dbSet.ToListAsync();
+        return await DbSet.ToListAsync();
     }
 
-    public async Task UpdateAsync(int id, T entity)
+    public async Task<T> AddAsync(T? entity)
     {
-        if (entity == null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
-        var existingEntity = await _dbSet.FindAsync(id);
-        if (existingEntity == null)
-        {
-            throw new ArgumentException($"Entity with {id} is not found");
-        }
-
-        _context.Entry(existingEntity).CurrentValues.SetValues(entity);
-        await _context.SaveChangesAsync();
+        if (entity == null) throw new ArgumentNullException(nameof(entity));
+        
+        await DbSet.AddAsync(entity);
+        
+        return entity;
+    }
+    public async Task UpdateAsync(int id, T? entity)
+    {
+        var existingEntity = await GetByIdAsync(id);
+        
+        if (entity == null || existingEntity == null) throw new ArgumentNullException(nameof(entity));
+        
+        var entityType = Context.Model.FindEntityType(typeof(T));
+        var key = entityType!.FindPrimaryKey();
+        var idProperty = key!.Properties[0];
+        
+        idProperty.PropertyInfo!.SetValue(entity, id);
+        
+        Context.Entry(existingEntity).CurrentValues.SetValues(entity);
+        Context.Entry(existingEntity).State = EntityState.Modified;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteByIdAsync(int id)
     {
         var entity = await GetByIdAsync(id);
-        if (entity == null)
-        {
-            throw new ArgumentException($"Entity with {id} is not found");
-        }
-        _dbSet.Remove(entity);
-        await _context.SaveChangesAsync();
+        
+        if (entity == null) throw new ArgumentException($"Entity with {id} is not found");
+        
+        DbSet.Remove(entity);
     }
 }

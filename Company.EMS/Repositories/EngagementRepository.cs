@@ -5,7 +5,6 @@ using Company.EMS.Repositories.Generic;
 
 namespace Company.EMS.Repositories;
 
-public class EngagementRepository: Repository<Engagement>, IEngagementRepository
+public class EngagementRepository(ApplicationDbContext context): Repository<Engagement>(context), IEngagementRepository
 {
-    public EngagementRepository(ApplicationDbContext context) : base(context) { }
 }

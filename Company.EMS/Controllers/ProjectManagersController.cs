@@ -4,82 +4,120 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Company.EMS.Controllers;
 
+/// <summary>
+/// 
+/// </summary>
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class ProjectManagersController(IProjectManagerService projectManagerService): ControllerBase
 {
-    private readonly IProjectManagerService _projectManagerService = projectManagerService;
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetAllProjectManagers()
     {
         try
         {
-            var projectManagers = await _projectManagerService.GetAllAsync();
+            var projectManagers = await projectManagerService.GetAllAsync();
+            
             return Ok(projectManagers);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> GetProjectManagerById(int id)
     {
         try
         {
-            var projectManager = await _projectManagerService.GetByIdAsync(id);
+            var projectManager = await projectManagerService.GetByIdAsync(id);
+            
+            if (projectManager == null) return NotFound();
+            
             return Ok(projectManager);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="projectManager"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> AddProjectManager([FromBody] ProjectManagerDto projectManager)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         try
         {
-            var projectManagerAdded = await _projectManagerService.AddAsync(projectManager);
-            return Ok(projectManagerAdded);
+            var projectManagerAdded = await projectManagerService.AddAsync(projectManager);
+            
+            return CreatedAtAction(nameof(GetProjectManagerById), new { id = projectManagerAdded?.Id }, projectManagerAdded);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="projectManager"></param>
+    /// <returns></returns>
     [HttpPut]
     [Route("{id}")]
     public async Task<IActionResult> UpdateProjectManager(int id, [FromBody] ProjectManagerDto projectManager)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            await _projectManagerService.UpdateAsync(id, projectManager);
-            return Ok();
+            await projectManagerService.UpdateAsync(id, projectManager);
+            
+            return NoContent();
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete]
     [Route("{id}")]
     public async Task<IActionResult> DeleteProjectManager(int id)
     {
         try
         {
-            await _projectManagerService.DeleteAsync(id);
-            return Ok();
+            await projectManagerService.DeleteByIdAsync(id);
+            
+            return NoContent();
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
 }

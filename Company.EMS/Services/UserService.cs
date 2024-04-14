@@ -14,7 +14,6 @@ namespace Company.EMS.Services;
 public class UserService(UserManager<IdentityUser> userManager, IConfiguration configuration): IUserService
 {
     private readonly UserManager<IdentityUser> _userManager = userManager;
-    private readonly IConfiguration _configuration = configuration;
 
     public async Task<string> RegisterUserAsync(RegisterDto request)
     {
@@ -46,7 +45,7 @@ public class UserService(UserManager<IdentityUser> userManager, IConfiguration c
     private async Task<string> GenerateJwtToken(IdentityUser user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);
     
         // Fetch roles for the user
         var roles = await _userManager.GetRolesAsync(user);

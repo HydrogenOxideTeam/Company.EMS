@@ -4,82 +4,121 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Company.EMS.Controllers;
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="assignmentService"></param>
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class AssignmentsController(IAssignmentService assignmentService): ControllerBase
 {
-    private readonly IAssignmentService _assignmentService = assignmentService;
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetAllAssignments()
     {
         try
         {
-            var assignments = await _assignmentService.GetAllAsync();
+            var assignments = await assignmentService.GetAllAsync();
+            
             return Ok(assignments);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> GetAssignmentById(int id)
     {
         try
         {
-            var assignment = await _assignmentService.GetByIdAsync(id);
+            var assignment = await assignmentService.GetByIdAsync(id);
+            
+            if (assignment == null) return NotFound();
+            
             return Ok(assignment);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="assignment"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> AddAssignment([FromBody] AssignmentDto assignment)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         try
         {
-            var assignmentAdded = await _assignmentService.AddAsync(assignment);
-            return Ok(assignmentAdded);
+            var assignmentAdded = await assignmentService.AddAsync(assignment);
+            
+            return CreatedAtAction(nameof(GetAssignmentById), new { id = assignmentAdded?.Id }, assignmentAdded);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="assignment"></param>
+    /// <returns></returns>
     [HttpPut]
     [Route("{id}")]
     public async Task<IActionResult> UpdateAssignment(int id, [FromBody] AssignmentDto assignment)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            await _assignmentService.UpdateAsync(id, assignment);
-            return Ok();
+            await assignmentService.UpdateAsync(id, assignment);
+            
+            return NoContent();
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete]
     [Route("{id}")]
     public async Task<IActionResult> DeleteAssignment(int id)
     {
         try
         {
-            await _assignmentService.DeleteAsync(id);
-            return Ok();
+            await assignmentService.DeleteByIdAsync(id);
+            
+            return NoContent();
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
 }

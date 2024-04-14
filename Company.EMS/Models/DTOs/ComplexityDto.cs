@@ -1,7 +1,5 @@
 namespace Company.EMS.Models.DTOs;
 
-public record ComplexityDto
+public record ComplexityDto(): BaseEnumDto
 {
-    public int Id { get; init; }
-    public string? Name { get; init; }
 }

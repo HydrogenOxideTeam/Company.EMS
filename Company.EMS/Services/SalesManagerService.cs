@@ -1,38 +1,42 @@
 ﻿using AutoMapper;
 using Company.EMS.Models.DTOs;
 using Company.EMS.Models.Entities;
-using Company.EMS.Repositories.Abstractions;
+using Company.EMS.Repositories.Generic;
 using Company.EMS.Services.Abstractions;
 
 namespace Company.EMS.Services;
-
-public class SalesManagerService(IMapper mapper, ISalesManagerRepository salesManagerRepository): ISalesManagerService
+public class SalesManagerService(IMapper mapper, IUnitOfWork unitOfWork): ISalesManagerService
 {
-    private readonly IMapper _mapper = mapper;
-    private readonly ISalesManagerRepository _salesManagerRepository = salesManagerRepository;
-    
-    public async Task<List<SalesManagerDto>> GetAllAsync()
+    public async Task<IEnumerable<SalesManagerDto>> GetAllAsync()
     {
-        return _mapper.Map<List<SalesManagerDto>>((await _salesManagerRepository.GetAllAsync())?.ToList());
+        var salesManagers = await unitOfWork.SalesManagers.GetAllAsync();
+        return mapper.Map<IEnumerable<SalesManagerDto>>(salesManagers);
     }
 
-    public async Task<SalesManagerDto> GetByIdAsync(int id)
+    public async Task<SalesManagerDto?> GetByIdAsync(int id)
     {
-        return _mapper.Map<SalesManagerDto>(await _salesManagerRepository.GetByIdAsync(id));
+        var salesManager = await unitOfWork.SalesManagers.GetByIdAsync(id);
+        return mapper.Map<SalesManagerDto>(salesManager);
     }
 
-    public async Task<SalesManagerDto> AddAsync(SalesManagerDto salesManager)
+    public async Task<SalesManagerDto?> AddAsync(SalesManagerDto? salesManagerDto)
     {
-        return _mapper.Map<SalesManagerDto>(await _salesManagerRepository.AddAsync(_mapper.Map<SalesManager>(salesManager)));
+        var salesManager = mapper.Map<SalesManager>(salesManagerDto);
+        var salesManagerAdded = await unitOfWork.SalesManagers.AddAsync(salesManager);
+        await unitOfWork.CompleteAsync();
+        return mapper.Map<SalesManagerDto>(salesManagerAdded);
     }
 
-    public async Task UpdateAsync(int id, SalesManagerDto salesManager)
+    public async Task UpdateAsync(int id, SalesManagerDto? salesManagerDto)
     {
-        await _salesManagerRepository.UpdateAsync(id,_mapper.Map<SalesManager>(salesManager));
+        var salesManager = mapper.Map<SalesManager>(salesManagerDto);
+        await unitOfWork.SalesManagers.UpdateAsync(id, salesManager);
+        await unitOfWork.CompleteAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteByIdAsync(int id)
     {
-        await _salesManagerRepository.DeleteAsync(id);
+        await unitOfWork.SalesManagers.DeleteByIdAsync(id);
+        await unitOfWork.CompleteAsync();
     }
 }

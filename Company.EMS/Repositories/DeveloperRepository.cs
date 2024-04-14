@@ -5,7 +5,6 @@ using Company.EMS.Repositories.Generic;
 
 namespace Company.EMS.Repositories;
 
-public class DeveloperRepository: Repository<Developer>, IDeveloperRepository
+public class DeveloperRepository(ApplicationDbContext context): Repository<Developer>(context), IDeveloperRepository
 {
-    public DeveloperRepository(ApplicationDbContext context) : base(context) { }
 }

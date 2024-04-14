@@ -4,9 +4,9 @@ namespace Company.EMS.Services.Abstractions;
 
 public interface IAssignmentService
 {
-    Task<List<AssignmentDto>> GetAllAsync();
-    Task<AssignmentDto> GetByIdAsync(int id);
-    Task<AssignmentDto> AddAsync(AssignmentDto assignment);
-    Task UpdateAsync(int id, AssignmentDto assignment);
-    Task DeleteAsync(int id);
+    Task<IEnumerable<AssignmentDto>> GetAllAsync();
+    Task<AssignmentDto?> GetByIdAsync(int id);
+    Task<AssignmentDto?> AddAsync(AssignmentDto? assignmentDto);
+    Task UpdateAsync(int id, AssignmentDto? assignmentDto);
+    Task DeleteByIdAsync(int id);
 }

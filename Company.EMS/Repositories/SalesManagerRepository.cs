@@ -5,7 +5,6 @@ using Company.EMS.Repositories.Generic;
 
 namespace Company.EMS.Repositories;
 
-public class SalesManagerRepository: Repository<SalesManager>, ISalesManagerRepository
+public class SalesManagerRepository(ApplicationDbContext context): Repository<SalesManager>(context), ISalesManagerRepository
 {
-    public SalesManagerRepository(ApplicationDbContext context) : base(context) { }
 }

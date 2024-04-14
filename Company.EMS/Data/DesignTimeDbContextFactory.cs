@@ -3,12 +3,27 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Company.EMS.Data;
 
+/// <summary>
+/// 
+/// </summary>
 public class DesignTimeDbContextFactory: IDesignTimeDbContextFactory<ApplicationDbContext>
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
     public ApplicationDbContext CreateDbContext(string[] args)
     {
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        var connectionString = configuration.GetConnectionString("Default");
+        
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        optionsBuilder.UseSqlServer("Server=tcp:company-ems.database.windows.net,1433;Initial Catalog=ems-prod;Persist Security Info=False;User ID=a.perevoshchenko;Password=Abc&123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+        optionsBuilder.UseSqlServer(connectionString);
 
         return new ApplicationDbContext(optionsBuilder.Options);
     }

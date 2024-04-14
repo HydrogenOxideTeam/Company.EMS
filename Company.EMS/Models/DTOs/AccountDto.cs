@@ -1,7 +1,11 @@
 namespace Company.EMS.Models.DTOs;
 
+/// <summary>
+/// 
+/// </summary>
 public record AccountDto()
 {
+    public int Id { get; init; }
     public string? FirstName { get; init; }
     public string? LastName { get; init; }
     public int SalesManagerId { get; init; } 

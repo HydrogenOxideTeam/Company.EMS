@@ -5,7 +5,6 @@ using Company.EMS.Repositories.Generic;
 
 namespace Company.EMS.Repositories;
 
-public class AssignmentRepository: Repository<Assignment>, IAssignmentRepository
+public class AssignmentRepository(ApplicationDbContext context): Repository<Assignment>(context), IAssignmentRepository
 {
-    public AssignmentRepository(ApplicationDbContext context) : base(context) { }
 }

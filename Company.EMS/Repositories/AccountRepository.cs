@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Company.EMS.Repositories;
 
-public class AccountRepository: Repository<Account>, IAccountRepository
+public class AccountRepository(ApplicationDbContext context): Repository<Account>(context), IAccountRepository
 {
-    public AccountRepository(ApplicationDbContext context) : base(context) { }
+
 }

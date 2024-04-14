@@ -1,38 +1,50 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using AutoMapper;
 using Company.EMS.Models.DTOs;
 using Company.EMS.Models.Entities;
-using Company.EMS.Repositories.Abstractions;
+using Company.EMS.Repositories.Generic;
 using Company.EMS.Services.Abstractions;
 
 namespace Company.EMS.Services;
 
-public class AccountService(IMapper mapper, IAccountRepository accountRepository): IAccountService
+public class AccountService(IMapper mapper, IUnitOfWork unitOfWork): IAccountService
 {
-    private readonly IMapper _mapper = mapper;
-    private readonly IAccountRepository _accountRepository = accountRepository;
-    
-    public async Task<List<AccountDto>> GetAllAsync()
+    public async Task<IEnumerable<AccountDto>> GetAllAsync()
     {
-        return _mapper.Map<List<AccountDto>>((await _accountRepository.GetAllAsync())?.ToList());
+        var accounts = await unitOfWork.Accounts.GetAllAsync();
+        
+        return mapper.Map<IEnumerable<AccountDto>>(accounts);
     }
 
-    public async Task<AccountDto> GetByIdAsync(int id)
+    public async Task<AccountDto?> GetByIdAsync(int id)
     {
-        return _mapper.Map<AccountDto>(await _accountRepository.GetByIdAsync(id));
+        var account = await unitOfWork.Accounts.GetByIdAsync(id);
+        
+        return mapper.Map<AccountDto>(account);
     }
 
-    public async Task<AccountDto> AddAsync(AccountDto account)
+    public async Task<AccountDto?> AddAsync(AccountDto? accountDto)
     {
-        return _mapper.Map<AccountDto>(await _accountRepository.AddAsync(_mapper.Map<Account>(account)));
+        var account = mapper.Map<Account>(accountDto);
+        var accountAdded = await unitOfWork.Accounts.AddAsync(account);
+        
+        await unitOfWork.CompleteAsync();
+        
+        return mapper.Map<AccountDto>(accountAdded);
     }
 
-    public async Task UpdateAsync(int id, AccountDto account)
+    public async Task UpdateAsync(int id, AccountDto? accountDto)
     {
-        await _accountRepository.UpdateAsync(id, _mapper.Map<Account>(account));
+        var account = mapper.Map<Account>(accountDto);
+        await unitOfWork.Accounts.UpdateAsync(id, account);
+        
+        await unitOfWork.CompleteAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteByIdAsync(int id)
     {
-        await _accountRepository.DeleteAsync(id);
+        await unitOfWork.Accounts.DeleteByIdAsync(id);
+        
+        await unitOfWork.CompleteAsync();
     }
 }

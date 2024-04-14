@@ -1,9 +1,15 @@
-﻿namespace Company.EMS.Models.DTOs.Validators;
+﻿using FluentValidation;
 
-using FluentValidation;
+namespace Company.EMS.Models.DTOs.Validators;
 
-public class RegisterDtoValidator : AbstractValidator<RegisterDto>
+/// <summary>
+/// 
+/// </summary>
+public abstract class RegisterDtoValidator : AbstractValidator<RegisterDto>
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public RegisterDtoValidator()
     {
         RuleFor(x => x.Email).NotEmpty().EmailAddress();

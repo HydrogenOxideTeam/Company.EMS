@@ -5,7 +5,6 @@ using Company.EMS.Repositories.Generic;
 
 namespace Company.EMS.Repositories;
 
-public class ProjectManagerRepository: Repository<ProjectManager>, IProjectManagerRepository
+public class ProjectManagerRepository(ApplicationDbContext context): Repository<ProjectManager>(context), IProjectManagerRepository
 {
-    public ProjectManagerRepository(ApplicationDbContext context) : base(context) { }
 }

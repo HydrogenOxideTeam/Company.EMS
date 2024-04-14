@@ -4,82 +4,121 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Company.EMS.Controllers;
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="developerService"></param>
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class DevelopersController(IDeveloperService developerService): ControllerBase
 {
-    private readonly IDeveloperService _developerService = developerService;
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetAllDevelopers()
     {
         try
         {
-            var developers = await _developerService.GetAllAsync();
+            var developers = await developerService.GetAllAsync();
+            
             return Ok(developers);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> GetDeveloperById(int id)
     {
         try
         {
-            var developer = await _developerService.GetByIdAsync(id);
+            var developer = await developerService.GetByIdAsync(id);
+            
+            if (developer == null) return NotFound();
+            
             return Ok(developer);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="developer"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> AddDeveloper([FromBody] DeveloperDto developer)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         try
         {
-            var developerAdded = await _developerService.AddAsync(developer);
-            return Ok(developerAdded);
+            var developerAdded = await developerService.AddAsync(developer);
+            
+            return CreatedAtAction(nameof(GetDeveloperById), new { id = developerAdded?.Id }, developerAdded);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="developer"></param>
+    /// <returns></returns>
     [HttpPut]
     [Route("{id}")]
     public async Task<IActionResult> UpdateDeveloper(int id, [FromBody] DeveloperDto developer)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            await _developerService.UpdateAsync(id, developer);
-            return Ok();
+            await developerService.UpdateAsync(id, developer);
+            
+            return NoContent();
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete]
     [Route("{id}")]
     public async Task<IActionResult> DeleteDeveloper(int id)
     {
         try
         {
-            await _developerService.DeleteAsync(id);
-            return Ok();
+            await developerService.DeleteByIdAsync(id);
+            
+            return NoContent();
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
 }

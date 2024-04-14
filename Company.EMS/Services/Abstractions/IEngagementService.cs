@@ -4,9 +4,9 @@ namespace Company.EMS.Services.Abstractions;
 
 public interface IEngagementService
 {
-    Task<List<EngagementDto>> GetAllAsync();
-    Task<EngagementDto> GetByIdAsync(int id);
-    Task<EngagementDto> AddAsync(EngagementDto engagement);
-    Task UpdateAsync(int id, EngagementDto engagement);
-    Task DeleteAsync(int id);
+    Task<IEnumerable<EngagementDto>> GetAllAsync();
+    Task<EngagementDto?> GetByIdAsync(int id);
+    Task<EngagementDto?> AddAsync(EngagementDto? engagementDto);
+    Task UpdateAsync(int id, EngagementDto? engagementDto);
+    Task DeleteByIdAsync(int id);
 }

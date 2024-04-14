@@ -1,38 +1,43 @@
 ﻿using AutoMapper;
 using Company.EMS.Models.DTOs;
 using Company.EMS.Models.Entities;
-using Company.EMS.Repositories.Abstractions;
+using Company.EMS.Repositories.Generic;
 using Company.EMS.Services.Abstractions;
 
 namespace Company.EMS.Services;
 
-public class EngagementService(IMapper mapper, IEngagementRepository engagementRepository): IEngagementService
+public class EngagementService(IMapper mapper, IUnitOfWork unitOfWork): IEngagementService
 {
-    private readonly IMapper _mapper = mapper;
-    private readonly IEngagementRepository _engagementRepository = engagementRepository;
-    
-    public async Task<List<EngagementDto>> GetAllAsync()
+    public async Task<IEnumerable<EngagementDto>> GetAllAsync()
     {
-        return _mapper.Map<List<EngagementDto>>((await _engagementRepository.GetAllAsync())?.ToList());
+        var engagements = await unitOfWork.Engagements.GetAllAsync();
+        return mapper.Map<IEnumerable<EngagementDto>>(engagements);
     }
 
-    public async Task<EngagementDto> GetByIdAsync(int id)
+    public async Task<EngagementDto?> GetByIdAsync(int id)
     {
-        return _mapper.Map<EngagementDto>(await _engagementRepository.GetByIdAsync(id));
+        var engagement = await unitOfWork.Engagements.GetByIdAsync(id);
+        return mapper.Map<EngagementDto>(engagement);
     }
 
-    public async Task<EngagementDto> AddAsync(EngagementDto engagement)
+    public async Task<EngagementDto?> AddAsync(EngagementDto? engagementDto)
     {
-        return _mapper.Map<EngagementDto>(await _engagementRepository.AddAsync(_mapper.Map<Engagement>(engagement)));
+        var engagement = mapper.Map<Engagement>(engagementDto);
+        var engagementAdded = await unitOfWork.Engagements.AddAsync(engagement);
+        await unitOfWork.CompleteAsync();
+        return mapper.Map<EngagementDto>(engagementAdded);
     }
 
-    public async Task UpdateAsync(int id, EngagementDto engagement)
+    public async Task UpdateAsync(int id, EngagementDto? engagementDto)
     {
-        await _engagementRepository.UpdateAsync(id,_mapper.Map<Engagement>(engagement));
+        var engagement = mapper.Map<Engagement>(engagementDto);
+        await unitOfWork.Engagements.UpdateAsync(id, engagement);
+        await unitOfWork.CompleteAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteByIdAsync(int id)
     {
-        await _engagementRepository.DeleteAsync(id);
+        await unitOfWork.Engagements.DeleteByIdAsync(id);
+        await unitOfWork.CompleteAsync();
     }
 }

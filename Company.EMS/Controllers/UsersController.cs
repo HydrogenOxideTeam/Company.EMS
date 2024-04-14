@@ -7,19 +7,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Company.EMS.Controllers;
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="userService"></param>
 [ApiController]
 [Route("[controller]")]
 public class UsersController(IUserService userService): ControllerBase
 {
-    private readonly IUserService _userService = userService;
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="AuthenticationException"></exception>
     [HttpPost]
     [Route("register")]
     public async Task<IActionResult> RegisterAsync(RegisterDto request)
     {
         try
         {
-            var token = await _userService.RegisterUserAsync(request);
+            var token = await userService.RegisterUserAsync(request);
+            
             if (!string.IsNullOrEmpty(token))
             {
                 return Ok(token);
@@ -41,13 +50,20 @@ public class UsersController(IUserService userService): ControllerBase
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="AuthenticationException"></exception>
     [HttpPost]
     [Route("login")]
     public async Task<IActionResult> LoginAsync(LoginDto request)
     {
         try
         {
-            var token = await _userService.LoginUserAsync(request);
+            var token = await userService.LoginUserAsync(request);
+            
             if (!string.IsNullOrEmpty(token))
             {
                 return Ok(token);
